@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "cmm",
+  "version": "${version}",
+  "name": "CustomModelMap",
+  "description": "idk",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/cmm/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [ "ru.benos.cmm.client.CustomModelMapClient" ],
+    "fabric-datagen": [ "ru.benos.cmm.CustomModelMap_DataGen" ]
+  },
+  "mixins": [ { "config": "cmm.client.mixins.json", "environment": "client" } ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "fabric-language-kotlin": ">=1.13.2+kotlin.2.1.20",
+    "fabric": "*",
+    "minecraft": "1.21.3",
+    "geckolib": "=4.7.1"
+  }
+}
