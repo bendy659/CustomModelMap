@@ -2,20 +2,15 @@ package ru.benos.cmm.client
 
 import com.google.gson.JsonParser
 import com.mojang.logging.LogUtils
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import java.io.InputStreamReader
 
-val String.rl: ResourceLocation get() = ResourceLocation.parse(this)
-val String.literal: MutableComponent get() = Component.literal(this)
-
-operator fun MutableComponent.plus(c: Component): MutableComponent = this.copy().append(c)
-
 val logger = LogUtils.getLogger()
 
-val modelMap = mutableMapOf<String, ResourceLocation>()
+val String.rl: ResourceLocation get() = ResourceLocation.parse(this)
+
+val modelMap: MutableMap<String, String> = mutableMapOf()
 
 fun load(resourceManager: ResourceManager) {
     val id = ResourceLocation.parse("cmm:model_map.json") ?: return
@@ -23,15 +18,10 @@ fun load(resourceManager: ResourceManager) {
     val json = JsonParser.parseReader(InputStreamReader(stream)).asJsonObject
 
     modelMap.clear()
+
     for ((key, value) in json.entrySet()) {
-        modelMap[key] = safeParseResourceLocation(value.asString) ?: continue
+        modelMap[key] = value.asString ?: continue
     }
-}
 
-private fun safeParseResourceLocation(resource: String): ResourceLocation? = try {
-    resource.rl
-} catch (e: IllegalAccessException) {
-    logger.error("Error generate ResourceLocation on: [$resource]")
-    null
+    logger.info("Found CMM models: $modelMap")
 }
-

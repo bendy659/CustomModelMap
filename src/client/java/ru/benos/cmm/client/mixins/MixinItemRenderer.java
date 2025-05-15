@@ -11,10 +11,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import ru.benos.cmm.client.CustomItemRenderer;
+import ru.benos.cmm.client.ModItemModel;
+import ru.benos.cmm.client.UtilsKt;
+import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 @Mixin(ItemRenderer.class)
-public class MixinCustomItemRenderer {
+public class MixinItemRenderer {
     @Inject(method = "renderItem", at = @At("HEAD"), cancellable = true)
     public void onRenderItem(
             ItemStack itemStack,
@@ -27,9 +29,11 @@ public class MixinCustomItemRenderer {
             boolean renderOpenBundle,
             CallbackInfo ci
     ) {
-        if(itemStack.has(DataComponents.CUSTOM_MODEL_DATA)) {
-            //var tag = itemStack.get(DataComponents.CUSTOM_MODEL_DATA);
-            CustomItemRenderer.Companion.getINSTANCE().renderByItem(itemStack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
+        var cmd = "" + itemStack.getComponents().get(DataComponents.CUSTOM_MODEL_DATA).value();
+
+        if(itemStack.getComponents().has(DataComponents.CUSTOM_MODEL_DATA) && UtilsKt.getModelMap().containsKey(cmd)) {
+            new GeoItemRenderer(new ModItemModel(cmd))
+                    .renderByItem(itemStack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
             ci.cancel();
         }
     }

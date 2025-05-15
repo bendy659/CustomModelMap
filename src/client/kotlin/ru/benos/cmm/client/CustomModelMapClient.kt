@@ -17,7 +17,7 @@ class CustomModelMapClient : ClientModInitializer {
 }
 
 object ReloadMyResources: SimpleSynchronousResourceReloadListener {
-    override fun getFabricId(): ResourceLocation = "cmm:reload_cmm".rl
+    override fun getFabricId(): ResourceLocation = "cmm:resources".rl
 
     override fun onResourceManagerReload(resourceManager: ResourceManager) = load(resourceManager)
 
