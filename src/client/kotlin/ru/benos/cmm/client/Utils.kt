@@ -10,6 +10,3 @@ val logger: Logger = Logger.getLogger("CMM")
 
 // String to ResourceLocation //
 val String.rl: ResourceLocation get() = ResourceLocation.parse(this)
-
-// Current tick //
-var currentTick: Double = 0.0

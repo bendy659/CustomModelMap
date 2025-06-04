@@ -23,9 +23,5 @@ class CustomModelMapClient : ClientModInitializer {
                 override fun onResourceManagerReload(resourceManager: ResourceManager) = load(resourceManager)
             }
         )
-
-        ClientTickEvents.END_CLIENT_TICK.register { client ->
-            currentTick = (client.player?.tickCount ?: 0) + 0.0
-        }
     }
 }

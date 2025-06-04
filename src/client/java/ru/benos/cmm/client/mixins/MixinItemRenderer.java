@@ -1,6 +1,7 @@
 package ru.benos.cmm.client.mixins;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -17,6 +18,7 @@ import ru.benos.cmm.client.Dummy;
 import ru.benos.cmm.client.DummyItem;
 import ru.benos.cmm.client.DummyModel;
 import ru.benos.cmm.client.ModelMap;
+import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 @Mixin(ItemRenderer.class)
@@ -37,18 +39,17 @@ public class MixinItemRenderer {
 
         if( custom_model_data != null && ModelMap.INSTANCE.getMap().get(custom_model_data.value() + "") != null ) {
             // Setting model for item //
-            var modelId = ModelMap.INSTANCE.getMap().get(custom_model_data.value() + "");
+            var geoModel = new DummyModel();
+            geoModel.setCustom_model_data(custom_model_data.value());
 
             // Create new item stack //
             var dummy = Dummy.INSTANCE.getDUMMY_ITEM();
             //var dummy = new DummyItem(new Item.Properties());
             var proxyStack = new ItemStack(dummy);
 
-            // Create model //
-            var geoModel = new DummyModel();
-            geoModel.setModel(modelId);
+            if(dummy.getRenderProvider() == null) dummy.createGeoRenderer(null);
 
-            // Create registered //
+            // Setup renderer //
             var renderer = new GeoItemRenderer<>(geoModel);
             renderer.renderByItem(proxyStack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
 
