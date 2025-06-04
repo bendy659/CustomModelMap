@@ -4,7 +4,7 @@
   "package": "ru.benos.cmm.client.mixins",
   "compatibilityLevel": "JAVA_21",
   "client": [
-
+    "MixinItemRenderer"
   ],
   "injectors": {
     "defaultRequire": 1 }

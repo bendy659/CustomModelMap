@@ -5,20 +5,24 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import ru.benos.cmm.client.ModItemModel;
-import ru.benos.cmm.client.UtilsKt;
+import ru.benos.cmm.client.Dummy;
+import ru.benos.cmm.client.DummyItem;
+import ru.benos.cmm.client.DummyModel;
+import ru.benos.cmm.client.ModelMap;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 @Mixin(ItemRenderer.class)
 public class MixinItemRenderer {
     @Inject(method = "renderItem", at = @At("HEAD"), cancellable = true)
-    public void onRenderItem(
+    private void onRenderItem(
             ItemStack itemStack,
             ItemDisplayContext displayContext,
             PoseStack poseStack,
@@ -29,11 +33,25 @@ public class MixinItemRenderer {
             boolean renderOpenBundle,
             CallbackInfo ci
     ) {
-        var cmd = "" + itemStack.getComponents().get(DataComponents.CUSTOM_MODEL_DATA).value();
+        CustomModelData custom_model_data = itemStack.getComponents().get(DataComponents.CUSTOM_MODEL_DATA);
 
-        if(itemStack.getComponents().has(DataComponents.CUSTOM_MODEL_DATA) && UtilsKt.getModelMap().containsKey(cmd)) {
-            new GeoItemRenderer(new ModItemModel(cmd))
-                    .renderByItem(itemStack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
+        if( custom_model_data != null && ModelMap.INSTANCE.getMap().get(custom_model_data.value() + "") != null ) {
+            // Setting model for item //
+            var modelId = ModelMap.INSTANCE.getMap().get(custom_model_data.value() + "");
+
+            // Create new item stack //
+            var dummy = Dummy.INSTANCE.getDUMMY_ITEM();
+            //var dummy = new DummyItem(new Item.Properties());
+            var proxyStack = new ItemStack(dummy);
+
+            // Create model //
+            var geoModel = new DummyModel();
+            geoModel.setModel(modelId);
+
+            // Create registered //
+            var renderer = new GeoItemRenderer<>(geoModel);
+            renderer.renderByItem(proxyStack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
+
             ci.cancel();
         }
     }
